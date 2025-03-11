@@ -66,19 +66,19 @@ def custom3Cube : Cube 3 :=
                             [Color.yellow, Color.orange, Color.yellow],
                             [Color.orange, Color.yellow, Color.yellow]] }
 
--- This version works for any n, not just n = 3.
+-- should work for any n
 def printUnfoldedCube {n : Nat} (cube : Cube n) : IO Unit := do
   -- Print the top face (left-aligned)
   for row in cube.top.stickers do
     IO.println (String.intercalate "" (row.toList.map (fun s => colorToEmoji s.color)))
-  IO.println ""  -- blank line
+
 
   -- Print the middle row: left, front, right, and back faces side-by-side.
   let faces := [cube.left, cube.front, cube.right, cube.back]
   for i in List.range n do
     let row := faces.map (fun f => f.stickers[i]!.toList.map (fun s => colorToEmoji s.color))
     IO.println (String.intercalate "" (row.map (String.intercalate "")))
-  IO.println ""
+
 
   -- Print the bottom face (left-aligned)
   for row in cube.bottom.stickers do
