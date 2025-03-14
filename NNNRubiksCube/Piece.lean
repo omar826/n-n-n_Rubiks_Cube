@@ -6,18 +6,7 @@ import NNNRubiksCube.Orientation
 namespace Orientation
 
 /-- A corner piece is an ordered triple of pairwise adjacent orientations, oriented as the standard
-basis.
-
-Since we identify colors and orientations, there's two possible ways to think of this type:
-
-- The position of a corner piece within a Rubik's cube, specified by its face, followed by its
-  relative orientation with respect to it. For instance, `CornerPiece.mk U B L` is the upper piece
-  in the upper-back-left corner.
-- A corner piece with a particular color, within a particular corner. For instance,
-  `CornerPiece.mk U B L` is the white piece of the white-blue-orange edge.
-
-The type `PRubik` contains a `Perm CornerPiece` field, which assigns to each corner piece position
-in the cube a particular sticker. -/
+basis. -/
 structure CornerPiece where
   fst : Orientation
   snd : Orientation
@@ -31,11 +20,6 @@ def toFinset (e : CornerPiece) : Finset Orientation :=
   ⟨{e.fst, e.snd, e.thd}, by
     have ⟨h₁, h₂, h₃⟩ := e.isAdjacent₃.ne
     simp [h₁, h₂, h₃.symm]⟩
-
-#check Finset
-#check Multiset
-#check Multiset.Nodup
-#check IsAdjacent₃.ne
 
 /-- Permutes the colors in a corner cyclically. -/
 def cyclic (c : CornerPiece) : CornerPiece :=
@@ -69,18 +53,7 @@ def Corner : Type := Quotient CornerPiece.instSetoid
 
 #check Quotient
 
-/-- An edge piece is an ordered pair of adjacent orientations along with an index.
-
-Since we identify colors and orientations, there's two possible ways to think of this structure:
-
-- The position of an edge piece within a Rubik's cube, specified by its face, followed by its
-  relative orientation with respect to it. For instance, `EdgePiece.mk U B` is the upper piece in
-  the upper-back edge.
-- An edge piece with a particular color, within a particular edge. For instance,
-  `EdgePiece.mk U B` is the white piece of the white-blue edge.
-
-The type `PRubik` contains a `Perm EdgePiece` field, which assigns to each edge piece position in
-the cube a particular sticker. -/
+/-- An edge piece is an ordered pair of adjacent orientations along with an index. -/
 structure EdgePiece (n : {m : ℕ // m ≥ 3}) where
   fst : Orientation
   snd : Orientation
