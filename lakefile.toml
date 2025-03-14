@@ -9,3 +9,7 @@ name = "NNNRubiksCube"
 name = "n_n_n_rubiks_cube"
 root = "Main"
 
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+
