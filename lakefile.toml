@@ -1,6 +1,6 @@
 name = "n_n_n_Rubiks_Cube"
 version = "0.1.0"
-defaultTargets = ["n-n-n_rubiks_cube"]
+defaultTargets = ["n_n_n_rubiks_cube"]
 
 [[lean_lib]]
 name = "NNNRubiksCube"
@@ -12,4 +12,3 @@ root = "Main"
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-
