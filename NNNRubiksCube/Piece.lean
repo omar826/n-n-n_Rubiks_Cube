@@ -51,8 +51,6 @@ end CornerPiece
 /-- Identifies corner pieces in a corner. -/
 def Corner : Type := Quotient CornerPiece.instSetoid
 
-#check Quotient
-
 /-- An edge piece is an ordered pair of adjacent orientations along with an index. -/
 structure EdgePiece (n : {m : ℕ // m ≥ 3}) where
   fst : Orientation
@@ -62,24 +60,63 @@ structure EdgePiece (n : {m : ℕ // m ≥ 3}) where
 
 namespace EdgePiece
 
+/-- Constructs the other edge piece sharing an edge and index. -/
+def flip {n : {m : ℕ // m ≥ 3}} (e : EdgePiece n) : EdgePiece n :=
+  ⟨_, _, e.isAdjacent.symm, e.index⟩
+
 /-- Constructs the finset containing the edge's orientations. -/
 def toFinset {n : {m : ℕ // m ≥ 3}} (e : EdgePiece n) : Finset Orientation :=
   ⟨{e.fst, e.snd}, by
     have h : e.fst ≠ e.snd := e.isAdjacent.ne
     simp [h]⟩
 
-/-- Constructs the other edge piece sharing an edge and index. -/
-def flip {n : {m : ℕ // m ≥ 3}} (e : EdgePiece n) : EdgePiece n :=
-  ⟨_, _, e.isAdjacent.symm, e.index⟩
+theorem toFinset_val {n : {m : ℕ // m ≥ 3}} (e : EdgePiece n) :
+  e.toFinset.val = {e.fst, e.snd} := rfl
+
+theorem mem_toFinset {n : {m : ℕ // m ≥ 3}} (e : EdgePiece n) :
+  e.fst ∈ e.toFinset.val ∧ e.snd ∈ e.toFinset.val := by
+    rw [toFinset_val]
+    simp
+
+theorem flip_toFinset {n : {m : ℕ // m ≥ 3}} (e : EdgePiece n) :
+  (e.flip).toFinset = e.toFinset := by
+    rw [toFinset]
+    simp_rw [Multiset.pair_comm]
+    rfl
+
+theorem flip_index {n : {m : ℕ // m ≥ 3}} (e : EdgePiece n) :
+  (e.flip).index = e.index := rfl
 
 instance (n : {m : ℕ // m ≥ 3}): Setoid (EdgePiece n) where
-  r e₁ e₂ := e₁.toFinset = e₂.toFinset
+  r e₁ e₂ := e₁.toFinset = e₂.toFinset ∧ e₁.index = e₂.index
   iseqv := by
     constructor
     · intro x
-      rfl
-    · exact Eq.symm
-    · exact Eq.trans
+      simp
+    · intro x y h
+      simp [h]
+    · intro x y z h₁ h₂
+      simp [h₁, h₂]
+
+theorem equiv_def (n : {m : ℕ // m ≥ 3}) (e₁ e₂ : EdgePiece n) :
+  e₁ ≈ e₂ ↔ e₁.toFinset = e₂.toFinset ∧ e₁.index = e₂.index := Iff.rfl
+
+theorem equiv_iff (n : {m : ℕ // m ≥ 3}) (e₁ e₂ : EdgePiece n) :
+  e₁ ≈ e₂ ↔ e₁ = e₂ ∨ e₁ = e₂.flip := by
+    simp_rw [equiv_def]
+    constructor
+    · intro h
+      by_cases h₁ : e₁ = e₂
+      · simp [h₁]
+      · simp [h₁]
+        sorry -- TODO: finish this
+    · by_cases h : e₁ = e₂
+      · simp [h]
+      · simp [h]
+        intro h₁
+        simp [h₁, flip_toFinset, flip_index]
+
+
 
 end EdgePiece
 
@@ -92,7 +129,7 @@ is atleast 3 (which requires n atleast 5).
 
 These pieces are defined by the side length of the square it belongs to,
 their color, as well an index.
-TODO: How do we exactly index? -/
+TODO: How do we exactly index? and does it matter? -/
 structure CentreSquareEdge (n : {m : ℕ // m ≥ 5}) where
   k : Fin (n - 4) -- side length - 3
   h₂ : k.val % 2 = n % 2 -- parity condition
